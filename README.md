@@ -2,6 +2,8 @@
 
 A 2D auto-runner for GitHub Game Off 2026. You are a packet moving through a live system. Edit the track before the packet reaches it. Distance is your score. A collision or a fall instantly boots a new run.
 
+![The packet crossing an exact-fit five-metre bridge with a 72% speed boost.](Media/packet-run.png)
+
 ## Play
 
 Use a desktop browser with a mouse and keyboard. Click **Run Program** or press **Enter** to start. The packet always moves right.

@@ -19,13 +19,6 @@ namespace ShiftRunner.Presentation
         Color32 noticeColor;
         Rect viewport;
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-        static void Boot()
-        {
-            if(FindFirstObjectByType<PacketRunner>()==null)
-                new GameObject("SHIFT - Packet Run").AddComponent<PacketRunner>();
-        }
-
         void Awake()
         {
             Application.targetFrameRate=60;
