@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#08131d">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23071620'/%3E%3Cpath d='M5 25 13 7h5l-8 18zm9 0 8-18h5l-8 18z' fill='%238effad'/%3E%3C/svg%3E">
+  <title>SHIFT // Packet Run</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #07121a; }
+    body { color: #c3ede8; font: 14px ui-monospace, Consolas, monospace; }
+    canvas { width: 100%; height: 100%; display: block; outline: 0; touch-action: none; }
+    #boot { position: absolute; inset: 0; display: grid; place-content: center; text-align: left;
+      background: repeating-linear-gradient(0deg, #07121a 0 39px, #0c202b 39px 40px); }
+    #boot[hidden] { display: none; }
+    #boot strong { color: #a2ff8f; font-size: clamp(30px, 6vw, 62px); letter-spacing: -.055em; }
+    #boot p { margin: 8px 0 18px; max-width: min(70ch, 85vw); overflow-wrap: anywhere; }
+    progress { width: 100%; height: 5px; border: 0; background: #21333f; accent-color: #a2ff8f; }
+    progress::-webkit-progress-bar { background: #21333f; }
+    progress::-webkit-progress-value { background: #a2ff8f; }
+  </style>
+</head>
+<body>
+  <canvas id="unity-canvas" width="{{{ WIDTH }}}" height="{{{ HEIGHT }}}" tabindex="0"
+    aria-label="Packet Run. Click to start. Click to attack and mark a start, Shift-click to select a range, Enter to build, Delete to erase, R to restart."></canvas>
+  <div id="boot" role="status"><strong>SHIFT<span style="color:#63e1ee">//</span></strong>
+    <p id="status">Loading Packet Run…</p><progress id="progress" value="0" max="1"></progress></div>
+  <script>
+    const canvas = document.getElementById("unity-canvas");
+    function showError(message) {
+      document.getElementById("status").textContent = "Could not start the game. " + message;
+      document.getElementById("progress").hidden = true;
+    }
+    canvas.addEventListener("pointerdown", () => canvas.focus({preventScroll: true}));
+    canvas.addEventListener("contextmenu", event => event.preventDefault());
+    canvas.addEventListener("keydown", event => {
+      if (["Backspace", "Delete", "Enter", "Shift"].includes(event.key)) event.preventDefault();
+    });
+  </script>
+  <script src="Build/{{{ LOADER_FILENAME }}}" onerror="showError('The Unity loader did not download.')"></script>
+  <script>
+    if (typeof createUnityInstance === "function") {
+      createUnityInstance(canvas, {
+        dataUrl: "Build/{{{ DATA_FILENAME }}}",
+        frameworkUrl: "Build/{{{ FRAMEWORK_FILENAME }}}",
+        codeUrl: "Build/{{{ CODE_FILENAME }}}",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: {{{ JSON.stringify(COMPANY_NAME) }}},
+        productName: {{{ JSON.stringify(PRODUCT_NAME) }}},
+        productVersion: {{{ JSON.stringify(PRODUCT_VERSION) }}},
+        devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2)
+      }, ratio => { document.getElementById("progress").value = ratio; })
+        .then(() => { document.getElementById("boot").hidden = true; canvas.focus({preventScroll: true}); })
+        .catch(showError);
+    }
+  </script>
+</body>
+</html>
